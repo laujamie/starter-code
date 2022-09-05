@@ -1,7 +1,10 @@
 import React, { useEffect } from "react";
 import { useAtom } from "jotai";
-import { magic } from "~/services/magic";
-import { userAtom, userLoading } from "~/stores/auth";
+import { Container, MantineProvider } from "@mantine/core";
+import { Outlet } from "react-router-dom";
+import { magic } from "~/src/services/magic";
+import { userAtom, userLoading } from "~/src/stores/auth";
+import Navbar from "~/src/components/Navbar";
 
 const App = () => {
   const [, setUser] = useAtom(userAtom);
@@ -10,6 +13,7 @@ const App = () => {
   useEffect(() => {
     setUserLoading(true);
     magic.user.isLoggedIn().then((isLoggedIn) => {
+      setUserLoading(false);
       isLoggedIn
         ? magic.user.getMetadata().then((userData) => setUser(userData))
         : setUser(null);
@@ -17,9 +21,18 @@ const App = () => {
   }, []);
 
   return (
-    <div className="App">
-      <p>Hello World</p>
-    </div>
+    <MantineProvider
+      withGlobalStyles
+      withNormalizeCSS
+      theme={{
+        colorScheme: "light",
+      }}
+    >
+      <Navbar title="Starter Project" />
+      <Container>
+        <Outlet />
+      </Container>
+    </MantineProvider>
   );
 };
 

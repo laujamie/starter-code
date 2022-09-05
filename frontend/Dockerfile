@@ -6,9 +6,9 @@ RUN apt-get install python3-pip -y
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install --quiet
+RUN npm install
 
 COPY . .
 EXPOSE 1234
 
-CMD ["npm", "start"]
+ENTRYPOINT ["npm", "start"]

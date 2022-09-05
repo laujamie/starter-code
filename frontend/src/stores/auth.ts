@@ -1,5 +1,4 @@
 import { atom } from "jotai";
-import { magic } from "~/services/magic";
 import type { MagicUserMetadata } from "magic-sdk";
 
 export type UserData = {
