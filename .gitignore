@@ -25,6 +25,7 @@ go.work
 bin
 
 tmp
+.env
 
 ### React ###
 
