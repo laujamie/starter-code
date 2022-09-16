@@ -11,8 +11,6 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
-	"github.com/magiclabs/magic-admin-go"
-	"github.com/magiclabs/magic-admin-go/client"
 	"github.com/magiclabs/magic-admin-go/token"
 
 	rendPkg "github.com/unrolled/render"
@@ -29,8 +27,6 @@ func main() {
 	r := chi.NewRouter()
 	render := rendPkg.New()
 
-	m := client.New("", magic.NewDefaultClient())
-
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
@@ -40,6 +36,7 @@ func main() {
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{"https://*", "http://*"},
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders: []string{"X-PINGOTHER", "Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 	}))
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {

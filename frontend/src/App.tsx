@@ -1,14 +1,22 @@
 import React, { useEffect } from "react";
 import { useAtom } from "jotai";
-import { Container, MantineProvider } from "@mantine/core";
-import { Outlet } from "react-router-dom";
-import { magic } from "~/src/services/magic";
+import { Container, LoadingOverlay, MantineProvider } from "@mantine/core";
+import { Outlet, useNavigate } from "react-router-dom";
+import { magic, handleLogout as logoutHelper } from "~/src/services/magic";
 import { userAtom, userLoading } from "~/src/stores/auth";
 import Navbar from "~/src/components/Navbar";
 
 const App = () => {
-  const [, setUser] = useAtom(userAtom);
-  const [, setUserLoading] = useAtom(userLoading);
+  const navigate = useNavigate();
+  const [user, setUser] = useAtom(userAtom);
+  const [isUserLoading, setUserLoading] = useAtom(userLoading);
+
+  const handleLogout = () => {
+    logoutHelper().then(() => {
+      navigate("/login");
+      setUser(null);
+    });
+  };
 
   useEffect(() => {
     setUserLoading(true);
@@ -28,8 +36,13 @@ const App = () => {
         colorScheme: "light",
       }}
     >
-      <Navbar title="Starter Project" />
+      <Navbar
+        title="Starter Project"
+        user={user != null}
+        logout={handleLogout}
+      />
       <Container>
+        <LoadingOverlay visible={isUserLoading} />
         <Outlet />
       </Container>
     </MantineProvider>

@@ -1,23 +1,32 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "jotai";
+import { useAtomsDebugValue } from "jotai/devtools";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import App from "~/src/App";
 import Home from "~/src/pages/Home";
 import Login from "~/src/pages/Login";
+import Callback from "~/src/pages/Callback";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
+const DebugAtoms = () => {
+  useAtomsDebugValue();
+  return null;
+};
+
 root.render(
   <React.StrictMode>
     <Provider>
+      <DebugAtoms />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<App />}>
             <Route index element={<Home />} />
             <Route path="login" element={<Login />} />
+            <Route path="callback" element={<Callback />} />
           </Route>
         </Routes>
       </BrowserRouter>
