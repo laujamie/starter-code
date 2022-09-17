@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { TextInput, Checkbox, Button, Group, Box, Alert } from "@mantine/core";
+import { TextInput, Button, Group, Alert } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useAtom } from "jotai";
 import { useNavigate } from "react-router-dom";
 import { handleLoginWithEmail } from "~/src/services/magic";
-import { userAtom } from "../stores/auth";
+import { useAuth } from "~/src/hooks/auth";
 
 type LoginForm = {
   email: string;
@@ -22,7 +21,7 @@ export default function Login() {
     },
   });
   const [formDisabled, setFormDisabled] = useState(false);
-  const [user, setUser] = useAtom(userAtom);
+  const { user, setUser } = useAuth();
   const [loginError, setLoginError] = useState<Error | null>(null);
 
   useEffect(() => {

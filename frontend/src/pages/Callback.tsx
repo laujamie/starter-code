@@ -1,13 +1,12 @@
 import React, { useEffect } from "react";
-import { LoadingOverlay } from "@mantine/core";
+import { Loader } from "@mantine/core";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAtom } from "jotai";
-import { userAtom } from "../stores/auth";
+import { useAuth } from "~/src/hooks/auth";
 import { magic } from "~/src/services/magic";
 
 export default function Callback(): JSX.Element {
   const navigate = useNavigate();
-  const [, setUser] = useAtom(userAtom);
+  const { setUser } = useAuth();
   const location = useLocation();
 
   useEffect(() => finishLogin(), []);
@@ -39,9 +38,5 @@ export default function Callback(): JSX.Element {
     }
   };
 
-  return (
-    <>
-      <LoadingOverlay visible />
-    </>
-  );
+  return <Loader />;
 }

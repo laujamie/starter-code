@@ -1,15 +1,18 @@
 import React, { useEffect } from "react";
-import { useAtom } from "jotai";
 import { Container, LoadingOverlay, MantineProvider } from "@mantine/core";
 import { Outlet, useNavigate } from "react-router-dom";
 import { magic, handleLogout as logoutHelper } from "~/src/services/magic";
-import { userAtom, userLoading } from "~/src/stores/auth";
+import { useAuth } from "~/src/hooks/auth";
 import Navbar from "~/src/components/Navbar";
 
 const App = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useAtom(userAtom);
-  const [isUserLoading, setUserLoading] = useAtom(userLoading);
+  const {
+    user,
+    setUser,
+    loading: isUserLoading,
+    setLoading: setUserLoading,
+  } = useAuth();
 
   const handleLogout = () => {
     logoutHelper().then(() => {
