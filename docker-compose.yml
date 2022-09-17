@@ -1,6 +1,6 @@
 version: "3.8"
 services:
-  backend:
+  starter-backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -9,7 +9,9 @@ services:
       - 5001:5001
     volumes:
       - ./backend:/app
-  frontend:
+    depends_on:
+      - starter-db
+  starter-frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -18,3 +20,11 @@ services:
     volumes:
       - ./frontend:/app/
       - /app/node_modules
+  starter-db:
+    image: cockroachdb/cockroach:latest-v22.1
+    ports:
+      - "26257:26257"
+      - "8080:8080"
+    command: start-single-node --insecure
+    volumes:
+      - "${PWD}/cockroach-data/db:/cockroach/cockroach-data"
