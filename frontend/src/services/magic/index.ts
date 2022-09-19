@@ -1,7 +1,7 @@
 import { Magic, MagicUserMetadata } from "magic-sdk";
 
 export const magic = new Magic(process.env.MAGIC_API_KEY ?? "", {
-  testMode: process.env.NODE_ENV == "development",
+  testMode: false,
 });
 
 export async function handleLoginWithEmail(
@@ -12,7 +12,7 @@ export async function handleLoginWithEmail(
     redirectURI: new URL("/callback", window.location.origin).href,
   });
 
-  const res = await fetch(`${process.env.SERVER_URL}/api/login`, {
+  const res = await fetch(`${process.env.SERVER_URL}/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

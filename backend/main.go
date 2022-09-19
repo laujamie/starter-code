@@ -1,22 +1,25 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
-	"strings"
-	"time"
+	"os"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
-	"github.com/magiclabs/magic-admin-go/token"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 
-	rendPkg "github.com/unrolled/render"
+	"github.com/laujamie/starter-code/internal/db"
+	"github.com/laujamie/starter-code/internal/handlers"
+	"github.com/laujamie/starter-code/internal/lib"
 )
 
-const BEARER_SCHEMA = "Bearer"
+func getEnv(key, fallback string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+	return fallback
+}
 
 func main() {
 	err := godotenv.Load()
@@ -24,63 +27,44 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	r := chi.NewRouter()
-	render := rendPkg.New()
+	ENV := getEnv("GO_ENV", "development")
 
-	r.Use(middleware.RequestID)
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
+	lib.InitAuth()
+	db.Init()
 
-	r.Use(middleware.Timeout(60 * time.Second))
+	e := echo.New()
+	e.Debug = ENV == "development"
 
-	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins: []string{"https://*", "http://*"},
-		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders: []string{"X-PINGOTHER", "Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+
+	e.Use(middleware.Timeout())
+
+	// CORS middleware when in dev environment
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"https://*", "http://*"},
+		AllowHeaders: []string{
+			echo.HeaderAuthorization,
+			echo.HeaderAccept,
+			echo.HeaderContentType,
+			echo.HeaderAccept,
+			echo.HeaderXCSRFToken,
+		},
+		AllowMethods: []string{
+			echo.GET,
+			echo.PUT,
+			echo.POST,
+			echo.DELETE,
+		},
 	}))
 
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("welcome"))
+	handlers.InitAuthRoutes(e)
+
+	e.GET("/", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, map[string]string{
+			"message": "hello world",
+		})
 	})
 
-	r.Post("/api/login", func(w http.ResponseWriter, r *http.Request) {
-		didToken := r.Header.Get("Authorization")
-
-		if !strings.HasPrefix(didToken, BEARER_SCHEMA) {
-			render.JSON(w,
-				http.StatusForbidden,
-				map[string]string{"message": "Bearer token is required"},
-			)
-			return
-		}
-
-		didToken = didToken[len(BEARER_SCHEMA)+1:]
-
-		if didToken == "" {
-			render.JSON(w,
-				http.StatusForbidden,
-				map[string]string{"message": "DID token is required"},
-			)
-			return
-		}
-
-		tk, err := token.NewToken(didToken)
-		if err != nil {
-			render.JSON(w,
-				http.StatusForbidden,
-				map[string]string{
-					"message": fmt.Sprintf("Malformed DID token error: %s", err.Error()),
-				},
-			)
-			return
-		}
-		if err := tk.Validate(); err != nil {
-			render.JSON(w, http.StatusForbidden, map[string]string{"message": err.Error()})
-			return
-		}
-
-		render.JSON(w, http.StatusOK, map[string]string{"message": "Validation successful"})
-	})
-
-	http.ListenAndServe(":5001", r)
+	e.Logger.Fatal(e.Start("0.0.0.0:5001"))
 }

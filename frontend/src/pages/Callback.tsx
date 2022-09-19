@@ -6,7 +6,7 @@ import { magic } from "~/src/services/magic";
 
 export default function Callback(): JSX.Element {
   const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const { setUser, setLoading: setUserLoading } = useAuth();
   const location = useLocation();
 
   useEffect(() => finishLogin(), []);
@@ -23,7 +23,7 @@ export default function Callback(): JSX.Element {
   };
 
   const authenticateWithServer = async (didToken: string | null) => {
-    const res = await fetch(`${process.env.SERVER_URL}/api/login`, {
+    const res = await fetch(`${process.env.SERVER_URL}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -34,6 +34,7 @@ export default function Callback(): JSX.Element {
     if (res.status === 200) {
       const userMetadata = await magic.user.getMetadata();
       setUser(userMetadata);
+      setUserLoading(false);
       navigate("/");
     }
   };
