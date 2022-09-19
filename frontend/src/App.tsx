@@ -1,9 +1,15 @@
 import React, { useEffect } from "react";
-import { Container, LoadingOverlay, MantineProvider } from "@mantine/core";
+import {
+  Container,
+  LoadingOverlay,
+  MantineProvider,
+  Stack,
+} from "@mantine/core";
 import { Outlet, useNavigate } from "react-router-dom";
 import { magic, handleLogout as logoutHelper } from "~/src/services/magic";
 import { useAuth } from "~/src/hooks/auth";
 import Navbar from "~/src/components/Navbar";
+import "./App.css";
 
 const App = () => {
   const navigate = useNavigate();
@@ -39,15 +45,20 @@ const App = () => {
         colorScheme: "light",
       }}
     >
-      <Navbar
-        title="Starter Project"
-        user={user != null}
-        logout={handleLogout}
-      />
-      <Container>
-        <LoadingOverlay visible={isUserLoading} />
-        <Outlet />
-      </Container>
+      <Stack align="center">
+        <Navbar
+          title="Starter Project"
+          user={user != null}
+          logout={handleLogout}
+        />
+        <Container
+          py="md"
+          sx={{ minHeight: "100%", flexGrow: 1, width: "100%" }}
+        >
+          <LoadingOverlay visible={isUserLoading} />
+          <Outlet />
+        </Container>
+      </Stack>
     </MantineProvider>
   );
 };

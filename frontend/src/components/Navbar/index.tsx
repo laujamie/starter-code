@@ -16,7 +16,11 @@ export default function Navbar({
   logout,
 }: NavbarProps): JSX.Element {
   return (
-    <Paper shadow="xs" style={{ background: backgroundColor }} py={12}>
+    <Paper
+      shadow="xs"
+      style={{ background: backgroundColor, width: "100%" }}
+      py={12}
+    >
       <Container>
         <Grid align="center">
           <Grid.Col span={4}>

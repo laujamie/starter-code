@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { TextInput, Button, Group, Alert } from "@mantine/core";
+import {
+  Text,
+  TextInput,
+  Button,
+  Group,
+  Alert,
+  Paper,
+  Divider,
+  Box,
+  Container,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useNavigate } from "react-router-dom";
 import { handleLoginWithEmail } from "~/src/services/magic";
@@ -32,41 +42,48 @@ export default function Login() {
   }, [user, navigate]);
 
   return (
-    <div>
-      <h1>Login</h1>
-      <form
-        onSubmit={form.onSubmit((values) => {
-          setFormDisabled(true);
-          handleLoginWithEmail(values.email)
-            .then((u) => {
-              setLoginError(null);
-              setUser(u);
-              navigate("/");
-            })
-            .catch((err: Error) => setLoginError(err))
-            .finally(() => setFormDisabled(false));
-        })}
-      >
-        <TextInput
-          withAsterisk
-          required
-          label="Email"
-          placeholder="johndoe@gmail.com"
-          {...form.getInputProps("email")}
-        />
-        {loginError != null && (
-          <Group mt="md" grow>
-            <Alert color="red" title={"Login failed"}>
-              {loginError.message}
-            </Alert>
-          </Group>
-        )}
-        <Group position="right" mt="md">
-          <Button type="submit" disabled={formDisabled}>
-            Submit
-          </Button>
-        </Group>
-      </form>
-    </div>
+    <Container size="xs">
+      <Paper shadow="xs" p="xl">
+        <Text component="h2" size={24}>
+          Welcome back!
+        </Text>
+        <Divider />
+        <Box pt="md">
+          <form
+            onSubmit={form.onSubmit((values) => {
+              setFormDisabled(true);
+              handleLoginWithEmail(values.email)
+                .then((u) => {
+                  setLoginError(null);
+                  setUser(u);
+                  navigate("/");
+                })
+                .catch((err: Error) => setLoginError(err))
+                .finally(() => setFormDisabled(false));
+            })}
+          >
+            <TextInput
+              withAsterisk
+              required
+              label="Email"
+              placeholder="johndoe@gmail.com"
+              {...form.getInputProps("email")}
+            />
+            {loginError != null && (
+              <Group mt="md" grow>
+                <Alert color="red" title={"Login failed"}>
+                  {loginError.message}
+                </Alert>
+              </Group>
+            )}
+            <Group grow mt="md">
+              <Button type="submit" disabled={formDisabled}>
+                Login/Sign Up
+              </Button>
+            </Group>
+          </form>
+        </Box>
+      </Paper>
+    </Container>
   );
 }
