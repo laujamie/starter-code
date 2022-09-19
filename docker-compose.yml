@@ -11,6 +11,8 @@ services:
       - ./backend:/app
     depends_on:
       - starter-db
+    links:
+      - starter-db
   starter-frontend:
     build:
       context: ./frontend
