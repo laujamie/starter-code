@@ -5,27 +5,19 @@ import {
   MantineProvider,
   Stack,
 } from "@mantine/core";
-import { Outlet, useNavigate } from "react-router-dom";
-import { magic, handleLogout as logoutHelper } from "~/src/services/magic";
+import { Outlet } from "react-router-dom";
+import { magic } from "~/src/services/magic";
 import { useAuth } from "~/src/hooks/auth";
 import Navbar from "~/src/components/Navbar";
 import "./App.css";
 
 const App = () => {
-  const navigate = useNavigate();
   const {
     user,
     setUser,
     loading: isUserLoading,
     setLoading: setUserLoading,
   } = useAuth();
-
-  const handleLogout = () => {
-    logoutHelper().then(() => {
-      navigate("/login");
-      setUser(null);
-    });
-  };
 
   useEffect(() => {
     setUserLoading(true);
@@ -45,12 +37,8 @@ const App = () => {
         colorScheme: "light",
       }}
     >
-      <Stack align="center">
-        <Navbar
-          title="Starter Project"
-          user={user != null}
-          logout={handleLogout}
-        />
+      <Stack align="center" spacing={0} sx={{ flexGrow: 1 }}>
+        <Navbar title="Starter Project" user={user} />
         <Container
           py="md"
           sx={{ minHeight: "100%", flexGrow: 1, width: "100%" }}

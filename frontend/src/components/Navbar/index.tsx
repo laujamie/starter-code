@@ -1,19 +1,27 @@
 import React from "react";
-import { Container, Grid, Paper, Group, Anchor, Text } from "@mantine/core";
+import {
+  Container,
+  Grid,
+  Paper,
+  Group,
+  Anchor,
+  Text,
+  HoverCard,
+} from "@mantine/core";
 import { Link } from "react-router-dom";
+import { IconChevronDown } from "@tabler/icons";
+import type { MagicUserMetadata } from "magic-sdk";
 
 type NavbarProps = {
   title: string;
   backgroundColor?: string;
-  user: boolean; // isolate component from business logic
-  logout: () => void;
+  user: MagicUserMetadata | null; // isolate component from business logic
 };
 
 export default function Navbar({
   title,
   backgroundColor,
   user,
-  logout,
 }: NavbarProps): JSX.Element {
   return (
     <Paper
@@ -29,8 +37,8 @@ export default function Navbar({
             </Anchor>
           </Grid.Col>
           <Grid.Col span={8}>
-            {!user ? (
-              <Group position="right">
+            <Group position="right">
+              {user == null ? (
                 <Anchor
                   component={Link}
                   to="/login"
@@ -39,14 +47,27 @@ export default function Navbar({
                 >
                   Login
                 </Anchor>
-              </Group>
-            ) : (
-              <Group position="right">
-                <Text onClick={logout} sx={{ cursor: "pointer" }}>
-                  Logout
-                </Text>
-              </Group>
-            )}
+              ) : (
+                <HoverCard position="bottom-end" width="target">
+                  <HoverCard.Target>
+                    <Group sx={{ cursor: "pointer" }} spacing={0}>
+                      <Text>{user.email}</Text>
+                      <IconChevronDown size={12} />
+                    </Group>
+                  </HoverCard.Target>
+                  <HoverCard.Dropdown>
+                    <Anchor
+                      component={Link}
+                      to="/logout"
+                      underline={false}
+                      variant="text"
+                    >
+                      Logout
+                    </Anchor>
+                  </HoverCard.Dropdown>
+                </HoverCard>
+              )}
+            </Group>
           </Grid.Col>
         </Grid>
       </Container>

@@ -7,6 +7,7 @@ import App from "~/src/App";
 import Home from "~/src/pages/Home";
 import Login from "~/src/pages/Login";
 import Callback from "~/src/pages/Callback";
+import Logout from "~/src/pages/Logout";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -27,6 +28,7 @@ root.render(
             <Route index element={<Home />} />
             <Route path="login" element={<Login />} />
             <Route path="callback" element={<Callback />} />
+            <Route path="logout" element={<Logout />} />
           </Route>
         </Routes>
       </BrowserRouter>
