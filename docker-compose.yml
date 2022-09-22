@@ -13,6 +13,9 @@ services:
       - starter-db
     links:
       - starter-db
+    restart: on-failure:5
+    environment:
+      - GO_ENV=development
   starter-frontend:
     build:
       context: ./frontend

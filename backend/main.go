@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -40,9 +41,23 @@ func main() {
 
 	e.Use(middleware.Timeout())
 
-	// CORS middleware when in dev environment
+	// Set CORS origins based on environment
+	var allowOrigins []string
+	if e.Debug {
+		allowOrigins = []string{"https://*", "http://*"}
+	} else {
+		clientUrl := getEnv("CLIENT_URL", "")
+		tmpUrl, err := url.Parse(clientUrl)
+		if err != nil {
+			panic("No client URL was provided.")
+		}
+		tmpUrl.Scheme = "https" // don't allow http outside dev
+		clientUrl = tmpUrl.String()
+		allowOrigins = []string{clientUrl}
+	}
+
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"https://*", "http://*"},
+		AllowOrigins: allowOrigins,
 		AllowHeaders: []string{
 			echo.HeaderAuthorization,
 			echo.HeaderAccept,
