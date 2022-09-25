@@ -31,8 +31,8 @@ root.render(
             <Route path="callback" element={<Callback />} />
             <Route path="logout" element={<Logout />} />
             <Route path="404" element={<NotFound />} />
+            <Route path="*" element={<Navigate to="/404" />} />
           </Route>
-          <Route path="*" element={<Navigate to="/404" />} />
         </Routes>
       </BrowserRouter>
     </Provider>
