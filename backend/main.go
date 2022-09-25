@@ -23,12 +23,14 @@ func getEnv(key, fallback string) string {
 }
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
 	ENV := getEnv("GO_ENV", "development")
+
+	if ENV == "development" {
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}
+	}
 
 	lib.InitAuth()
 	db.Init()

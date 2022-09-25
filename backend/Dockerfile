@@ -1,11 +1,12 @@
-FROM golang:1.19 AS build
-WORKDIR /app
+FROM golang:1.19-alpine AS build
+WORKDIR /build
 COPY . .
+RUN apk add build-base
 RUN go mod download
-RUN go build -o /out/server .
+RUN go build -o server .
 
-FROM build AS dev
-RUN curl -fLo install.sh https://raw.githubusercontent.com/cosmtrek/air/master/install.sh \   
-&& chmod +x install.sh && sh install.sh && cp ./bin/air /bin/air
-
-CMD "air"
+FROM alpine:3.16.2
+WORKDIR /app
+COPY --from=build /build/server .
+EXPOSE 5001
+ENTRYPOINT ["./server"]

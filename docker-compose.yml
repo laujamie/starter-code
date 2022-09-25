@@ -3,7 +3,7 @@ services:
   starter-backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
       target: dev
     ports:
       - 5001:5001
